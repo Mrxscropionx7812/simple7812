@@ -1,10 +1,10 @@
 
 -- database
 CREATE DATABASE stonescroll
+USE stonescroll
 -- ss_userdetails
 CREATE TABLE ss_userdetails (
-    id INT AUTO_INCREMENT,
-    userid INT PRIMARY KEY,
+    userid INT AUTO_INCREMENT,
     fname VARCHAR(150),
     lname VARCHAR(150),
     phonenumber VARCHAR(180),
@@ -17,5 +17,8 @@ CREATE TABLE ss_userdetails (
     modifieddate TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     createddate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_userid (userid),
-    UNIQUE KEY (id)
+    UNIQUE KEY (userid)
 );
+
+
+INSERT INTO ss_userdetails (fname,lname,phonenumber,email,taddress,paddress,plan,amount,user_status) VALUES ('test demo', 'demo', , 'test1@gmail.com', 'paid address', 'address in bill', 'D', 0, 'ACTIVE');
