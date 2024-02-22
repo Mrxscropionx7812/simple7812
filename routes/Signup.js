@@ -1,38 +1,52 @@
 const express = require("express");
 const mysqldb = require('../config/mysqldb');
-const { encrypt, passCompare, resultRes } = require("../lib/validation")
-    //need to add auth and validation
+const {
+    encrypt,
+    passCompare,
+    resultRes,
+    useridEncrypt,
+    useridDecrypt
+} = require("../lib/validation")
+
 
 const router = express.Router();
 
-router.post('/', async(req, res, next) => {
+//need to add auth and validation
+//need to check dulicate
+router.post('/signup', async(req, res, next) => {
     var response = {};
 
     const result = {
         fname: req.body.fname,
         lname: req.body.lname,
-        username: req.body.uname,
+        uname: req.body.uname,
         phonenumber: req.body.phonenumber,
         email: req.body.email,
         taddress: req.body.taddress,
         paddress: req.body.paddress,
         plan: "D",
         amount: 0.0,
-        user_status: 'ACTIVE'
+        user_status: 'ACTIVE',
+        password: ''
     };
-
-    const hasPass = encrypt(req.body.password);
-    result["password"] = hasPass
 
     const columns = Object.keys(result).join(',');
 
     if (Object.keys(result).length === 11) {
-        const values = Object.values(result).map(val => (`'${val}'`)).join(', ');
         const table = "ss_userdetails";
-        const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
 
         try {
+
+
+            result["password"] = await encrypt(req.body.password)
+
+
+            const values = Object.values(result).map(val => (`'${val}'`)).join(', ');
+            const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
+
+
             await mysqldb.insertOne(insertSql);
+
             res.status(200).json(resultRes("success"));
         } catch (error) {
             res.status(500).json(resultRes("error", "Invalid user data"));
@@ -43,48 +57,69 @@ router.post('/', async(req, res, next) => {
     }
 });
 
-router.post('/forgetpassword', async(req, res, next) => {
-    const response = {};
+router.post('/login', async(req, res, next) => {
+    var response = {};
 
     const result = {
-        fname: req.body.fname,
-        lname: req.body.lname,
         phonenumber: req.body.phonenumber,
-        password: (req.body.password),
-        email: req.body.email,
-        taddress: req.body.taddress,
-        paddress: req.body.paddress,
-        plan: "D",
-        amount: 0.0,
-        user_status: 'ACTIVE'
-    };
+        password: req.body.password,
 
+    };
 
 
     const columns = Object.keys(result).join(',');
 
-    if (Object.keys(result).length === 10) {
-        const values = Object.values(result).map(val => (typeof val === 'string' ? `'${val}'` : val)).join(', ');
+    if (Object.keys(result).length === 2) {
+
+        const values = Object.values(result).map(val => (`'${val}'`)).join(', ');
         const table = "ss_userdetails";
-        const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
+        const selectSql = `SELECT * from ${table} where phonenumber = '${result['phonenumber']}';`;
 
-        try {
 
-            await mysqldb.insertOne(insertSql);
-            response["status"] = "success";
-            res.status(200).json(response);
-        } catch (error) {
-            console.error('Database error:', error);
-            response["status"] = "fail";
-            response["message"] = "Invalid user data";
-            res.status(500).json(response);
+        const dbdata = await mysqldb.find(selectSql);
+
+
+        if (dbdata != null && dbdata.length > 0) {
+
+            let dbData = dbdata[0]
+            var ispass = await passCompare(result["password"], dbData["password"])
+
+            let resultdata = {
+                "uid": useridEncrypt(dbData["userid"]),
+                "uname": dbData["uname"],
+                "status": ispass
+            }
+            if (ispass) {
+
+                res.status(200).json(resultRes("success", '', resultdata));
+
+
+            } else {
+                res.status(200).json(resultRes("error", "woring password"));
+            }
+
+
+        } else {
+
+            res.status(201).json(resultRes("error", "go to singup"));
+
         }
 
+
+
+
+
+
+
+
+
+
+
     } else {
-        response["status"] = "fail";
-        response["message"] = "Invalid user data";
-        res.status(401).json(response);
+        res.status(401).json(resultRes("error", "Invalid user data"));
     }
 });
+
+
 
 module.exports = router;

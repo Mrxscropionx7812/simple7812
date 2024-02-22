@@ -40,14 +40,24 @@ const insertOne = (sql) => {
 };
 
 const find = (sqlQuery) => {
-    con.query(sqlQuery, function(err, result, fields) {
-        if (err) {
-            console.error('Error executing find query:', err.stack);
-        } else {
-            return result;
-        }
+    return new Promise((resolve, reject) => {
+        con.query(sqlQuery, function(err, result, fields) {
+            if (err) {
+                console.error('Error executing find query:', err.stack);
+                reject(false);
+            } else {
+                if (result && result.length > 0) {
+                    // If there are rows in the result, resolve with the first row
+                    resolve(JSON.parse(JSON.stringify(result)));
+                } else {
+                    // If the result is empty, resolve with null
+                    resolve(null);
+                }
+            }
+        });
     });
 };
+
 
 const update = (sqlQuery, ) => {
     con.query(sqlQuery, function(err, result) {
@@ -65,5 +75,6 @@ module.exports = {
     connection: con,
     insertOne: insertOne,
     find: find,
+
     update: update,
 };
