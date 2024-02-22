@@ -7,6 +7,7 @@ CREATE TABLE ss_userdetails (
     userid INT AUTO_INCREMENT,
     fname VARCHAR(150),
     lname VARCHAR(150),
+    uname VARCHAR(255) NOT NULL,
     phonenumber VARCHAR(180),
     email VARCHAR(200),
     taddress VARCHAR(250),
@@ -19,6 +20,3 @@ CREATE TABLE ss_userdetails (
     INDEX idx_userid (userid),
     UNIQUE KEY (userid)
 );
-
-
-INSERT INTO ss_userdetails (fname,lname,phonenumber,email,taddress,paddress,plan,amount,user_status) VALUES ('test demo', 'demo', , 'test1@gmail.com', 'paid address', 'address in bill', 'D', 0, 'ACTIVE');

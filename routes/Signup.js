@@ -1,18 +1,18 @@
 const express = require("express");
 const mysqldb = require('../config/mysqldb');
-const { encrypt, passCompare } = require("../lib/validation")
+const { encrypt, passCompare, resultRes } = require("../lib/validation")
     //need to add auth and validation
 
 const router = express.Router();
 
 router.post('/', async(req, res, next) => {
-    const response = {};
+    var response = {};
 
     const result = {
         fname: req.body.fname,
         lname: req.body.lname,
+        username: req.body.uname,
         phonenumber: req.body.phonenumber,
-
         email: req.body.email,
         taddress: req.body.taddress,
         paddress: req.body.paddress,
@@ -21,33 +21,25 @@ router.post('/', async(req, res, next) => {
         user_status: 'ACTIVE'
     };
 
-
     const hasPass = encrypt(req.body.password);
     result["password"] = hasPass
 
     const columns = Object.keys(result).join(',');
 
-    if (Object.keys(result).length === 10) {
+    if (Object.keys(result).length === 11) {
         const values = Object.values(result).map(val => (`'${val}'`)).join(', ');
         const table = "ss_userdetails";
         const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
 
         try {
-
             await mysqldb.insertOne(insertSql);
-            response["status"] = "success";
-            res.status(200).json(response);
+            res.status(200).json(resultRes("success"));
         } catch (error) {
-            console.error('Database error:', error);
-            response["status"] = "fail";
-            response["message"] = "Invalid user data";
-            res.status(500).json(response);
+            res.status(500).json(resultRes("error", "Invalid user data"));
         }
 
     } else {
-        response["status"] = "fail";
-        response["message"] = "Invalid user data";
-        res.status(401).json(response);
+        res.status(401).json(resultRes("error", "Invalid user data"));
     }
 });
 
