@@ -15,6 +15,6 @@ app.use(bphars.json());
 
 
 const welcome = require("./routes/Welcome");
-const signup = require("./routes/Signup");
+const home = require("./routes/Home");
 app.use("/welcome", welcome);
-app.use("/home", signup);
+app.use("/home", home);

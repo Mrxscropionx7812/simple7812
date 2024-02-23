@@ -20,8 +20,23 @@ CREATE TABLE ss_userdetails (
     INDEX idx_userid (userid),
     UNIQUE KEY (userid)
 );
-ALTER TABLE ss_userdetails
-ADD COLUMN uname VARCHAR(255) NOT NULL;
+
+-- scroll_tracking
+CREATE TABLE scroll_tracking (
+  userid INT NOT NULL,
+  uname VARCHAR(250),
+  nocopy INT NOT NULL,
+  papertype VARCHAR(150),
+  side INT,
+  doc_name VARCHAR(255),
+  delivarydate TIMESTAMP,
+  createddate TIMESTAMP,
+  modifieddate TIMESTAMP
+);
+
+
+ALTER TABLE scroll_tracking ADD COLUMN doc_name VARCHAR(255); 
+
 
 SELECT * from ss_userdetails where phonenumber = '91-7788227711';
 
