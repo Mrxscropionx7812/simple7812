@@ -50,7 +50,7 @@ const find = (sqlQuery) => {
                     // If there are rows in the result, resolve with the first row
                     resolve(JSON.parse(JSON.stringify(result)));
                 } else {
-                    // If the result is empty, resolve with null
+                    // If the results is empty, resolve with null
                     resolve(null);
                 }
             }
