@@ -6,14 +6,19 @@ const path = require('path')
 const { format } = require('date-fns');
 const { authenticateToken, generateAccessToken } = require('../middleware/authMiddleware')
 const {
+    isStrongPassword,
+    validateField,
+    validateEmail,
+    validatePhoneNumber,
+    validateAddress,
+    diffArray,
+    genRanNum,
+    useridEncrypt,
+    useridDecrypt,
     encrypt,
     passCompare,
     resultRes,
-    useridEncrypt,
-    useridDecrypt,
-    genRanNum,
-    diffArray,
-    EmptyValues
+    EmptyValues,
 } = require("../lib/validation")
 
 
@@ -25,7 +30,6 @@ const currentDateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
 //need to check dulicate
 //need to use S3 for uploded
 router.post('/signup', async(req, res, next) => {
-    var response = {};
 
     const result = {
         fname: req.body.fname,
@@ -38,28 +42,60 @@ router.post('/signup', async(req, res, next) => {
         plan: "D",
         amount: 0.0,
         user_status: 'ACTIVE',
-        password: ''
+        password: req.body.password,
     };
+    const minLength = 3
+    const maxLength = 15
+
+    const fnameError = validateField('First name', result.fname, minLength, maxLength);
+    if (fnameError) return res.status(403).json(resultRes('error', fnameError));
+
+    const lnameError = validateField('Last name', result.lname, minLength, maxLength);
+    if (lnameError) return res.status(403).json(resultRes('error', lnameError));
+
+    const unameError = validateField('User name', result.uname, minLength, maxLength);
+    if (unameError) return res.status(403).json(resultRes('error', unameError));
+
+    const emailError = result.email ? validateEmail(result.email) : null;
+    if (emailError) return res.status(403).json(resultRes('error', emailError));
+
+    const phoneNumberError = result.phonenumber ? validatePhoneNumber(result.phonenumber) : null;
+    if (phoneNumberError) return res.status(403).json(resultRes('error', phoneNumberError));
+
+    const taddressError = result.taddress ? validateAddress(result.taddress) : null;
+    if (taddressError) return res.status(403).json(resultRes('error', taddressError));
+
+    const paddressError = result.paddress ? validateAddress(result.paddress) : null;
+    if (paddressError) return res.status(403).json(resultRes('error', paddressError));
+
+    const passwordError = result.password ? isStrongPassword(result.password) : null;
+    if (passwordError) return res.status(403).json(resultRes('error', passwordError));
+
 
     const columns = Object.keys(result).join(',');
-
     if (Object.keys(result).length === 11) {
+
         const table = "ss_userdetails";
 
+        const selectSql = `SELECT * from ${table} where phonenumber = '${result['phonenumber']}' ;`;
+        const dbdata = await mysqldb.find(selectSql);
+
+        if (dbdata == null && dbdata.length == 0) {
+            res.status(301).json(resultRes("error", "Phonumber is already exit, try other number"));
+            return false;
+        }
+
         try {
-
             result["password"] = await encrypt(req.body.password)
-
-
             const values = Object.values(result).map(val => (`'${val}'`)).join(', ');
-            const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
-
-
-            await mysqldb.insertOne(insertSql);
-
-            res.status(200).json(resultRes("success"));
+            const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`
+            if (await mysqldb.insertOne(insertSql)) {
+                res.status(200).json(resultRes("success"));
+            } else {
+                res.status(408).json(resultRes("error", 'Something went worng'));
+            }
         } catch (error) {
-            res.status(500).json(resultRes("error", "Invalid user data"));
+            res.status(500).json(resultRes("error", "Something went worng"));
         }
 
     } else {
@@ -75,7 +111,7 @@ router.post('/login', async(req, res, next) => {
 
     };
 
-    console.log("hit")
+
     const columns = Object.keys(result).join(',');
 
     if (Object.keys(result).length === 2) {
