@@ -81,8 +81,8 @@ router.post('/login', async(req, res, next) => {
 
         if (dbdata != null && dbdata.length > 0) {
 
-            let dbData = dbdata[0]
-            var ispass = await passCompare(result["password"], dbData["password"])
+            let dbData = dbdata[0];
+            var ispass = await passCompare(result["password"], dbData["password"]);
 
             let resultdata = {
                 "uid": useridEncrypt(dbData["userid"]),
