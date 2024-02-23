@@ -32,4 +32,4 @@ Access the application in your browser.
 Contributing:
 Contributions are welcome! Feel free to submit issues, feature requests, or pull requests.
 
-Feel free to customize the information as per your project details, and don't forget to replace "[link-to-license]" with the actual link to your project's license file.
+Feel free to customize the information as per your project details
