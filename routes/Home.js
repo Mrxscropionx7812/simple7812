@@ -75,6 +75,7 @@ router.post('/login', async(req, res, next) => {
 
     };
 
+    console.log("hit")
     const columns = Object.keys(result).join(',');
 
     if (Object.keys(result).length === 2) {
