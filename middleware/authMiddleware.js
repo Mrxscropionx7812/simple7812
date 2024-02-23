@@ -1,22 +1,26 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
-  const token = req.header('Authorization');
-
-  if (!token) {
-    return res.status(401).json({ message: 'Unauthorized: Missing token' });
-  }
-
-  jwt.verify(token, 117788, (err, user) => {
-    if (err) {
-      let t = 117788
-      return res.status(403).json({ message: 'Forbidden: Invalid token',t:t});
+    const token = req.header('X-Auth');
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized: Missing token' });
     }
+    jwt.verify(token, "117788", (err, user) => {
+        if (err) {
 
-    // Attach the user information to the request for further use in the route handlers
-    req.user = user;
-    next();
-  });
+            return res.status(403).json({ message: 'Forbidden: Invalid token' });
+        }
+        next();
+    });
 };
 
-module.exports = authenticateToken;
+
+function generateAccessToken(username) {
+    return jwt.sign(username, "117788");
+}
+
+
+module.exports = {
+    authenticateToken,
+    generateAccessToken
+};
