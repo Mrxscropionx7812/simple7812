@@ -151,7 +151,8 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     const fileName = `ss_${genRanNum(10)}.${orginalFormate}`
                     const filepath = `${tempPath}/${fileName}`;
 
-                    console.log(filepath);
+
+
 
                     let rawData = fs.readFileSync(uploadPath)
                     fs.writeFile(filepath, rawData, function(err) {
