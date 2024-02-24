@@ -60,14 +60,15 @@ const find = (sqlQuery) => {
 
 
 const update = (sqlQuery, upVal) => {
-    con.query(sqlQuery, upVal, function(err, result) {
-        if (err) {
-            console.error('Error executing update query:', err.stack);
-            return false;
-        } else {
-            console.log(result.affectedRows);
-            return result.affectedRows > 0;
-        }
+    return new Promise((resolve, reject) => {
+        con.query(sqlQuery, upVal, (err, result) => {
+            if (err) {
+                console.error('Error executing update query:', err.stack);
+                reject(false);
+            } else {
+                resolve(result.affectedRows > 0);
+            }
+        });
     });
 };
 

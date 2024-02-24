@@ -40,6 +40,7 @@ router.post('/signup', async(req, res, next) => {
         user_status: 'ACTIVE',
         password: req.body.password,
     };
+
     const minLength = 3
     const maxLength = 15
 
@@ -72,11 +73,10 @@ router.post('/signup', async(req, res, next) => {
     if (Object.keys(result).length === 11) {
 
         const table = "ss_userdetails";
-
         const selectSql = `SELECT * from ${table} where phonenumber = '${result['phonenumber']}' ;`;
         const dbdata = await mysqldb.find(selectSql);
 
-        if (dbdata == null && dbdata.length == 0) {
+        if (dbdata != null && dbdata.length == 0) {
             res.status(301).json(resultRes("error", "Phonumber is already exit, try other number"));
             return false;
         }
@@ -106,11 +106,10 @@ router.post('/login', async(req, res, next) => {
         password: req.body.password,
 
     };
-
     const phoneNumberError = result.phonenumber ? validatePhoneNumber(result.phonenumber) : null;
     if (phoneNumberError) return res.status(403).json(resultRes('error', phoneNumberError));
-    const passwordError = (result.password && result.password != '') ? true : false;
-    if (passwordError) return res.status(403).json(resultRes('error', passwordError));
+    // const passwordError = (result.password && result.password != '') ? true : false;
+    // if (passwordError) return res.status(403).json(resultRes('error', passwordError));
 
     const columns = Object.keys(result).join(',');
     if (Object.keys(result).length === 2) {
@@ -119,8 +118,7 @@ router.post('/login', async(req, res, next) => {
         const table = "ss_userdetails";
         const selectSql = `SELECT * from ${table} where phonenumber = '${result['phonenumber']}';`;
         const dbdata = await mysqldb.find(selectSql)
-
-        // if (!dbdata) return res.status(403).json(resultRes('error', "something went worng"));
+        if (!dbdata) return res.status(403).json(resultRes('error', "something went worng"));
 
         if (dbdata != null && dbdata.length > 0) {
             let dbData = dbdata[0];
@@ -163,14 +161,15 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
             if (misingFiled.length == 0 && invalidField.length == 0) {
 
                 const userid = useridDecrypt(fields.uid[0]);
+                console.log("userid==>", userid)
                 const table = "scroll_tracking";
                 const selectSql = `SELECT * from ${table} where userid = '${userid}';`;
                 const dbdata = await mysqldb.find(selectSql);
 
-                if (!dbdata) return res.status(403).json(resultRes('error', "something went worng"));
+                // if (!dbdata) return res.status(403).json(resultRes('error', "something went worng"));
 
-                let dbData = dbdata[0];
-                if (dbdata == null && dbdata.length == 0) {
+                if (dbdata == null) {
+
 
                     let fileFormate = files.img[0].mimetype;
                     let uploadPath = files.img[0].filepath;
@@ -186,7 +185,7 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     formdata["doc_name"] = fileName;
                     var userdata = {
                         'userid': userid,
-                        'uname': dbData['uname'],
+                        'uname': fields.uname[0],
                         "nocopy": fields.nocopy[0],
                         "papertype": fields.papertype[0],
                         'side': fields.side[0],
@@ -199,14 +198,15 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     const columns = Object.keys(userdata).join(',');
                     const values = Object.values(userdata).map(val => (`'${val}'`)).join(', ');
                     const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
-                    const insertRe = await mysqldb.insertOne(insertSql);
 
-                    if (insertRe) {
-                        res.status(200).json(resultRes("success", '', dbData));
-                    } else {
+                    await mysqldb.insertOne(insertSql).then((value) => {
+                        res.status(200).json(resultRes("success", 'Uploaded success', ));
+                    }).catch((error) => {
                         res.status(408).json(resultRes("error", 'Something went worng'));
-                    }
+                    });
+
                 } else {
+                    let dbData = dbdata[0];
                     let fileFormate = files.img[0].mimetype;
                     let uploadPath = files.img[0].filepath;
                     let tempPath = path.join(__dirname, '../temp')
@@ -221,19 +221,36 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     })
 
                     formdata["doc_name"] = fileName;
-                    var dbDoc_name = dbData["doc_name"];
-                    var fDoc_name = `${formdata["doc_name"]},${dbDoc_name}`;
 
-                    const table = 'scroll_tracking';
-                    const updateSql = `UPDATE scroll_tracking set doc_name =? where userid =?`
-                    const upVal = [fDoc_name, userid]
-                    const updateRe = await mysqldb.update(updateSql, upVal);
-
-                    if (updateRe && updateRe > 0) {
-                        res.status(200).json(resultRes("success"));
+                    let isNew = true;
+                    const dbNameArray = dbData["doc_name"] != '' ? dbData["doc_name"].split(',') : [];
+                    if (dbNameArray.length != 5) {
+                        isNew = false;
+                        res.status(301).json(resultRes("error", "Image limit 5"));
                     } else {
-                        res.status(408).json(resultRes("error", 'Something went worng'));
+                        isNew = true;
                     }
+                    if (isNew) {
+
+                        var dbDoc_name = dbData["doc_name"];
+                        var fDoc_name = `${formdata["doc_name"]},${dbDoc_name}`;
+                        const table = 'scroll_tracking';
+                        const updateSql = `UPDATE scroll_tracking set doc_name =? where userid =?`
+                        const upVal = [fDoc_name, userid];
+
+                        await mysqldb.update(updateSql, upVal).then((success) => {
+                                res.status(200).json(resultRes("success"));
+                            })
+                            .catch((error) => {
+                                res.status(408).json(resultRes("error", 'Something went worng'));
+                            });;
+
+                    } else {
+                        res.status(301).json(resultRes("error", "Image already exit, try other images"));
+                    }
+
+
+
                 }
             } else {
                 res.status(401).json(resultRes("error", "Invalid user data", (misingFiled.length > 0 ? misingFiled : invalidField)));
