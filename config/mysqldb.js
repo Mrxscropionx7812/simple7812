@@ -59,8 +59,8 @@ const find = (sqlQuery) => {
 };
 
 
-const update = (sqlQuery, ) => {
-    con.query(sqlQuery, function(err, result) {
+const update = (sqlQuery, upVal) => {
+    con.query(sqlQuery, upVal, function(err, result) {
         if (err) {
             console.error('Error executing update query:', err.stack);
             return false;
@@ -75,6 +75,5 @@ module.exports = {
     connection: con,
     insertOne: insertOne,
     find: find,
-
     update: update,
 };
