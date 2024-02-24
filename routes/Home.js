@@ -21,14 +21,10 @@ const {
     EmptyValues,
 } = require("../lib/validation")
 
-
 const router = express.Router();
 
 const currentDateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
 
-//need to add auth and validation
-//need to check dulicate
-//need to use S3 for uploded
 router.post('/signup', async(req, res, next) => {
 
     const result = {
@@ -111,10 +107,10 @@ router.post('/login', async(req, res, next) => {
 
     };
 
-    // const phoneNumberError = result.phonenumber ? validatePhoneNumber(result.phonenumber) : null;
-    // if (phoneNumberError) return res.status(403).json(resultRes('error', phoneNumberError));
-    // const passwordError = (result.password && result.password != '') ? true : false;
-    // if (passwordError) return res.status(403).json(resultRes('error', passwordError));
+    const phoneNumberError = result.phonenumber ? validatePhoneNumber(result.phonenumber) : null;
+    if (phoneNumberError) return res.status(403).json(resultRes('error', phoneNumberError));
+    const passwordError = (result.password && result.password != '') ? true : false;
+    if (passwordError) return res.status(403).json(resultRes('error', passwordError));
 
     const columns = Object.keys(result).join(',');
     if (Object.keys(result).length === 2) {
@@ -204,6 +200,7 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     const values = Object.values(userdata).map(val => (`'${val}'`)).join(', ');
                     const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
                     const insertRe = await mysqldb.insertOne(insertSql);
+
                     if (insertRe) {
                         res.status(200).json(resultRes("success", '', dbData));
                     } else {
@@ -258,6 +255,7 @@ router.post('/getdoc', authenticateToken, async(req, res, next) => {
     if (docidError) return res.status(403).json(resultRes('error', docidError));
 
     const columns = Object.keys(userData).join(',');
+
     if (Object.keys(userData).length === 2) {
 
         const values = Object.values(userData).map(val => (`'${val}'`)).join(', ');
@@ -270,14 +268,16 @@ router.post('/getdoc', authenticateToken, async(req, res, next) => {
 
             let dbData = dbdata[0];
             const docNameArray = dbData.doc_name.includes(',') ? dbData.doc_name.split(',') : '';
-            var finalNameArray = []
-            let tempPath = path.join(__dirname, '../temp') // change to s3 
+            var finalNameArray = [];
+
+            let tempPath = path.join(__dirname, '../temp'); // change to s3 
+
             docNameArray.forEach((value, index, array) => {
                 console.log(value)
                 finalNameArray.push(`${tempPath}/${value}`)
             })
             const docArray = [...new Set(finalNameArray)];
-            var result = { docArray }
+            var result = { docArray };
 
             res.status(200).json(resultRes("success", '', result));
 
