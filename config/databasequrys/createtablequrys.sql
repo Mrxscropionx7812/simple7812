@@ -42,3 +42,6 @@ SELECT * from ss_userdetails where phonenumber = '91-7788227711';
 
 INSERT INTO ss_userdetails (fname,lname,uname,phonenumber,email,taddress,paddress,plan,amount,user_status,password) VALUES ('test3 demo', 'demo3', 'testuser2', '91-7788227713', 'test3@gmail.com', 'paid address', 'address in bill', 'D', '0', 'ACTIVE', 'undefined');
 $2b$12$f9OOK2eVx/qw4k9NJPwEgOxaEuV6b1bi/Od.HRFiTMFFWgjYmB7t6
+
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY 'root';

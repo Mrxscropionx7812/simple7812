@@ -1,5 +1,6 @@
 const express = require("express");
 const mysqldb = require('../config/mysqldb');
+const mongodb = require('../config/mongodb');
 const formidable = require('formidable');
 const fs = require('fs');
 const path = require('path')
@@ -147,6 +148,8 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
 
     const form = new formidable.IncomingForm();
     form.parse(req, async function(err, fields, files) {
+        console.log("hit")
+        console.log("files-->",files)
 
         const formdata = [...new Set(Object.keys(fields))];
         const defaultData = ['uid', 'uname', "nocopy", "papertype", 'side', "delivarydate"];
@@ -199,13 +202,14 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     const values = Object.values(userdata).map(val => (`'${val}'`)).join(', ');
                     const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
 
-                    await mysqldb.insertOne(insertSql).then((value) => {
-                        res.status(200).json(resultRes("success", 'Uploaded success', ));
-                    }).catch((error) => {
-                        res.status(408).json(resultRes("error", 'Something went worng'));
-                    });
+                    // await mysqldb.insertOne(insertSql).then((value) => {
+                    //     res.status(200).json(resultRes("success", 'Uploaded success', ));
+                    // }).catch((error) => {
+                    //     res.status(408).json(resultRes("error", 'Something went worng'));
+                    // });
 
                 } else {
+                    console.log("update")
                     let dbData = dbdata[0];
                     let fileFormate = files.img[0].mimetype;
                     let uploadPath = files.img[0].filepath;
@@ -221,34 +225,20 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     })
 
                     formdata["doc_name"] = fileName;
-
-                    let isNew = true;
-                    const dbNameArray = dbData["doc_name"] != '' ? dbData["doc_name"].split(',') : [];
-                    if (dbNameArray.length != 5) {
-                        isNew = false;
-                        res.status(301).json(resultRes("error", "Image limit 5"));
-                    } else {
-                        isNew = true;
+                    const Muserdata = {
+                        "userid":userid,
+                        "docpath":{tempPath},
+                        "basicdoc":{fileName}
                     }
-                    if (isNew) {
+                    console.log("Muserdata==>",Muserdata);
+                    await mongodb.MinsertOne("scroll_tracking_doc",).then((val)=>{
 
-                        var dbDoc_name = dbData["doc_name"];
-                        var fDoc_name = `${formdata["doc_name"]},${dbDoc_name}`;
-                        const table = 'scroll_tracking';
-                        const updateSql = `UPDATE scroll_tracking set doc_name =? where userid =?`
-                        const upVal = [fDoc_name, userid];
+                    }).catch((er)=>{
 
-                        await mysqldb.update(updateSql, upVal).then((success) => {
-                                res.status(200).json(resultRes("success"));
-                            })
-                            .catch((error) => {
-                                res.status(408).json(resultRes("error", 'Something went worng'));
-                            });;
-
-                    } else {
-                        res.status(301).json(resultRes("error", "Image already exit, try other images"));
-                    }
-
+                    })
+                    
+                    
+                    
 
 
                 }
