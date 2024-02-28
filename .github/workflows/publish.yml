@@ -23,6 +23,8 @@ jobs:
 
       - name: Check Git Status
         run: |
+          git config --global user.email "blackscropionx25@gmail.com"
+          git config --global user.name "Mrxscropionx7812"
           if [[ -n $(git status --porcelain) ]]; then
             git add .
             git commit -m "Committing changes before publishing"
