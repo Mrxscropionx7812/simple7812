@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 18
 
       - name: Install Dependencies
         run: npm install -g npm@latest
@@ -29,6 +29,11 @@ jobs:
             git add .
             git commit -m "Committing changes before publishing"
           fi
+
+      - name: Display Node.js and npm Versions
+        run: |
+          echo "Node.js version: $(node --version)"
+          echo "npm version: $(npm --version)"
 
       - name: Delay
         run: sleep 30s  # Add a delay of 30 seconds
