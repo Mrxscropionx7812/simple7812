@@ -37,7 +37,7 @@ const Mfind = async (Mycollection) => {
     const database = client.db(Mdb);
     const collection = database.collection(Mycollection);
     const result = await collection.findOne({});
-    console.log(result);
+    
     return result;
   } catch (error) {
     console.error('Error finding document:', error);
@@ -50,7 +50,6 @@ const Mupdate = async (Mycollection, query, update) => {
     const database = client.db(Mdb);
     const collection = database.collection(Mycollection);
     const result = await collection.updateMany(query, update);
-    console.log(`${result.modifiedCount} document(s) updated`);
     return result;
   } catch (error) {
     console.error('Error updating documents:', error);
@@ -62,7 +61,6 @@ const Mupsert = async (Mycollection, query, update) => {
     const database = client.db(Mdb);
     const collection = database.collection(Mycollection);
     const result = await collection.updateMany(query,update, { upsert: true });
-    console.log(`${result.modifiedCount} document(s) updated`);
     return result;
   } catch (error) {
     console.error('Error updating documents:', error);
@@ -76,7 +74,6 @@ const MfindWithCondition = async (Mycollection, query,limitValue = 1) => {
     const database = client.db(Mdb);
     const collection = database.collection(Mycollection);
     const result = await collection.find(query,{ projection: { basicdoc: { $slice: limitValue } } }).toArray();
-    console.log(result);
     return result;
   } catch (error) {
     console.error('Error finding documents with condition:', error);
