@@ -57,7 +57,7 @@ This is a basic web application developed using Node.js and Express.js, providin
 1. [ ```Database Setup``` ]
    - Ensure you have MySQL installed on your machine.
    - Create a new database named `stonescroll`.
-   - Import the SQL dump file  [ `stonescrolldump.sql` ] provided in the project's root directory to set up the [ `strce` ] table with sample data.
+   - Import the SQL dump file  [ `stonescrolldump.sql` ] provided in the project's root directory to set up the  [ `strce` ] table with sample data.
 
    ```bash
    mysql -u your-username -p stonescroll < stonescrolldump.sql
