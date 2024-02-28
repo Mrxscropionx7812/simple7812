@@ -70,7 +70,6 @@ This is a basic web application developed using Node.js and Express.js, providin
 2.Create a new database named [ `stonescroll` ].
 
 ### HTTP Status Codes:
-### HTTP Status Codes:
 
 * [ ```200 OK``` ] The request was successful.
 * [ ```201 Created``` ] The request has been fulfilled, and a new resource has been created.
@@ -85,3 +84,8 @@ This is a basic web application developed using Node.js and Express.js, providin
 * [ ```502 Bad Gateway``` ] The server, while acting as a gateway or proxy, received an invalid response from an inbound server it accessed while attempting to fulfill the request.
 * [ ```503 Service Unavailable``` ] The server is not ready to handle the request. Common causes include a server that is down for maintenance or that is overloaded.
 
+### ENDPOINTS:
+[ ``` /home/signup``` ]
+[ ``` /home/login```  ]
+[ ``` /home/Upload``` ]
+[ ``` /home/getdoc``` ] parma if need [ ``` ?docname=ss_2001386585.jpeg ``` ]
