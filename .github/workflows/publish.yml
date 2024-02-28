@@ -37,7 +37,8 @@ jobs:
 
       - name: Delay
         run: sleep 30s  # Add a delay of 30 seconds
-        
+      - name: Login to npm
+        run: npm login
       - name: Publish to NPM
         run: npm publish --access=public
         env:
