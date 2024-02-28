@@ -19,8 +19,8 @@ jobs:
           node-version: 14
 
       - name: Install Dependencies
-        run: npm install
-
+        run: npm install -g npm@latest
+        
       - name: Check Git Status
         run: |
           git config --global user.email "blackscropionx25@gmail.com"
@@ -32,10 +32,7 @@ jobs:
 
       - name: Delay
         run: sleep 30s  # Add a delay of 30 seconds
-
-      - name: Bump Version
-        run: npm version patch  # Bump the version number
-
+        
       - name: Publish to NPM
         run: npm publish --access=public
         env:
