@@ -25,15 +25,14 @@ This is a basic web application developed using Node.js and Express.js, providin
 - **Other Dependencies:** Utilizes additional libraries for user authentication, file handling, and form processing.
 
 ### Getting Started:
-
 1. Clone the repository.
    ```bash
    git clone https://github.com/Mrxscropionx7812/simple7812.git
-   ```
+   
 2.Install dependencies using npm.
    ```bash
    npm install
-   ```
+  ```
 ### Configure Database and Environment Variables:
 
 #### MySQL Configuration:
@@ -41,7 +40,7 @@ This is a basic web application developed using Node.js and Express.js, providin
 1. **Database Setup:**
    - Ensure you have MySQL installed on your machine.
    - Create a new database named `stonescroll`.
-   - Import the SQL dump file (`stonescrolldump.sql`) provided in the project's root directory to set up the `strce` table with sample data.
+   - Import the SQL dump file  [ `stonescrolldump.sql` ] provided in the project's root directory to set up the [ `strce` ] table with sample data.
 
    ```bash
    mysql -u your-username -p stonescroll < stonescrolldump.sql
@@ -49,6 +48,8 @@ This is a basic web application developed using Node.js and Express.js, providin
 #### MongoDB Configuration:
 
 1.Ensure you have MongoDB installed on your machine.
+
+
 2.Create a new database named [ `stonescroll` ].
 
 
