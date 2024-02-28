@@ -84,8 +84,32 @@ This is a basic web application developed using Node.js and Express.js, providin
 * [ ```502 Bad Gateway``` ] The server, while acting as a gateway or proxy, received an invalid response from an inbound server it accessed while attempting to fulfill the request.
 * [ ```503 Service Unavailable``` ] The server is not ready to handle the request. Common causes include a server that is down for maintenance or that is overloaded.
 
+
+
 ### ENDPOINTS:
-[ ``` /home/signup``` ]
-[ ``` /home/login```  ]
-[ ``` /home/Upload``` ]
-[ ``` /home/getdoc``` ] parma if need [ ``` ?docname=ss_2001386585.jpeg ``` ]
+
+* **Signup:**
+  - Endpoint: `/home/signup`
+  - Method: `POST`
+  - Description: Used for user registration and account creation.
+
+* **Login:**
+  - Endpoint: `/home/login`
+  - Method: `POST`
+  - Description: Handles user authentication and login.
+
+* **File Upload:**
+  - Endpoint: `/home/upload`
+  - Method: `POST`
+  - Description: Allows users to upload files to the server.
+
+* **Get Document:**
+  - Endpoint: `/home/getdoc`
+  - Method: `POST`
+  - Description: Retrieves information about a specific document.
+  - Query Parameters:
+    - `docname`: (Optional) Specifies the name of the document to retrieve. Example: `?docname=ss_2001386585.jpeg`
+    - `noofdocs`: (Optional) Number of image to retrieve. Example: `?noofdocs=5`
+    - if the parm `empty` it return all images
+
+Feel free to modify the descriptions, methods, and additional details based on the actual functionality and requirements of your API.
