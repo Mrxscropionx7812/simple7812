@@ -24,11 +24,9 @@ const {
 } = require("../lib/validation")
 
 const router = express.Router();
-
 const currentDateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
 
 router.post('/signup', async(req, res, next) => {
-
     const result = {
         fname: req.body.fname,
         lname: req.body.lname,
@@ -108,15 +106,14 @@ router.post('/login', async(req, res, next) => {
         password: req.body.password,
 
     };
+
     const phoneNumberError = result.phonenumber ? validatePhoneNumber(result.phonenumber) : null;
     if (phoneNumberError) return res.status(403).json(resultRes('error', phoneNumberError));
-    // const passwordError = (result.password && result.password != '') ? true : false;
-    // if (passwordError) return res.status(403).json(resultRes('error', passwordError));
+    const passwordError = (result.password && result.password != '') ? true : false;
+    if (passwordError) return res.status(403).json(resultRes('error', passwordError));
 
-    const columns = Object.keys(result).join(',');
+
     if (Object.keys(result).length === 2) {
-
-        const values = Object.values(result).map(val => (`'${val}'`)).join(', ');
         const table = "ss_userdetails";
         const selectSql = `SELECT * from ${table} where phonenumber = '${result['phonenumber']}';`;
         const dbdata = await mysqldb.find(selectSql)
@@ -149,23 +146,16 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
 
     const form = new formidable.IncomingForm();
     form.parse(req, async function(err, fields, files) {
-        console.log("hit")
         
-
         const formdata = [...new Set(Object.keys(fields))];
         const defaultData = ['uid', 'uname', "nocopy", "papertype", 'side', "delivarydate"];
 
         if (formdata.length > 0) {
-
             const { uniqueValues, duplicateValues, uniqueToArr2 } = diffArray(formdata, defaultData)
-
             let misingFiled = uniqueToArr2
             const invalidField = EmptyValues(formdata);
-
             if (misingFiled.length == 0 && invalidField.length == 0) {
-
                 const userid = useridDecrypt(fields.uid[0]);
-                console.log("userid==>", userid)
                 const table = "scroll_tracking";
                 const selectSql = `SELECT * from ${table} where userid = '${userid}';`;
                 const dbdata = await mysqldb.find(selectSql);
@@ -173,7 +163,6 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                 // if (!dbdata) return res.status(403).json(resultRes('error', "something went worng"));
 
                 if (dbdata == null) {
-
 
                     let fileFormate = files.img[0].mimetype;
                     let uploadPath = files.img[0].filepath;
@@ -203,7 +192,6 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     const values = Object.values(userdata).map(val => (`'${val}'`)).join(', ');
                     const insertSql = `INSERT INTO ${table} (${columns}) VALUES (${values});`;
 
-
                     const Muserdata = {
                                         "userid": userid,
                                         "docpath": tempPath,
@@ -217,18 +205,15 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                                         ],
                                     createddate:currentDateTime,
                                 };
-                      console.log(Muserdata)
                     await mongodbf.MinsertOne("scroll_tracking_doc",Muserdata).then((val)=>{
                         
-                        userdata["doc_name"] = val.insertedId.toString()
-                        console.log("userdata in ==>",userdata);
+                        userdata["doc_name"] = val.insertedId.toString();
 
                         mysqldb.insertOne(insertSql).then((value) => {
                             res.status(200).json(resultRes("success", 'Uploaded success', ));
                         }).catch((error) => {
                             res.status(408).json(resultRes("error", 'Something went worng'));
                         });
-
                     }).catch((er)=>{
                         res.status(408).json(resultRes("error", 'Something went worng'));
                     })
@@ -241,48 +226,38 @@ router.post('/Upload', authenticateToken, async(req, res, next) => {
                     let orginalFormate = fileFormate.split('/')[1];
                     const fileName = `ss_${genRanNum(10)}.${orginalFormate}`
                     const filepath = `${tempPath}/${fileName}`;
-
-                    //dbData.doc_name
-                    const trackingdocid = "65dcb9b7c59dc8b5e8bb6d0c";
+                    const trackingdocid = (dbData.doc_name!='' && dbData.doc_name!=null) ? dbData.doc_name : '';
 
                     let rawData = fs.readFileSync(uploadPath)
                     fs.writeFile(filepath, rawData, function(err) {
                         if (err) console.log(err)
                         return true
                     })
-
-                    const McondiotnQuery = { _id: new ObjectId(trackingdocid) };
-
-                    // await mongodbf.MfindWithCondition("scroll_tracking_doc",Mquery).then((val)=>{
-                    //     console.log("valf==>",val);
-                    // }).catch((er)=>{
-                    //     console.log("erf==>",er)
-
-                    // })
-
-                    formdata["doc_name"] = fileName;
-                    const Muserdata ={ 
-                        $push: {
-                                "basicdoc":  {
-                                    $each:[
-                                        {
-                                            docName:fileName,
-                                            createddate:currentDateTime,
-                                            modifieddate:currentDateTime,
-                                            status:"active"
-                                        }
-                                    ] 
-                            } 
+                    if(trackingdocid!=''){
+                        const McondiotnQuery = { _id: new ObjectId(trackingdocid) };
+                        formdata["doc_name"] = fileName;
+                        const Muserdata ={ 
+                            $push: {
+                                    "basicdoc":  {
+                                        $each:[
+                                            {
+                                                docName:fileName,
+                                                createddate:currentDateTime,
+                                                modifieddate:currentDateTime,
+                                                status:"active"
+                                            }
+                                        ] 
+                                } 
+                            }
                         }
-                    }
-                    
-                    await mongodbf.Mupsert("scroll_tracking_doc",McondiotnQuery,Muserdata).then((val)=>{
-                        console.log("valiin==>",val);
-
-                    }).catch((er)=>{
-                        console.log("erin==>",er)
-
-                    })                    
+                        await mongodbf.Mupsert("scroll_tracking_doc",McondiotnQuery,Muserdata).then((val)=>{
+                            res.status(200).json(resultRes("success", 'Uploaded success', ));
+                        }).catch((er)=>{
+                            res.status(401).json(resultRes("error", "Invalid user data"));
+                        })     
+                    }else{
+                        res.status(401).json(resultRes("error", "Invalid user data"));
+                    }               
                 }
             } else {
                 res.status(401).json(resultRes("error", "Invalid user data", (misingFiled.length > 0 ? misingFiled : invalidField)));
@@ -298,23 +273,16 @@ router.post('/getdoc', authenticateToken, async (req, res, next) => {
     try {
         const docName = req.query.docname || null;
         const noOfDocs = parseInt(req.query.noofdocs) || null;
-
         const userData = { uid: useridDecrypt(req.body.uid) };
 
-        
         if (Object.keys(userData).length === 1) {
-
             const table = "scroll_tracking";
             const selectSql = `SELECT doc_name from ${table} where userid = '${userData['uid']}';`;
-
             const dbdata = await mysqldb.find(selectSql);
-
             if (dbdata != null && dbdata.length > 0) {
                 const dbData = dbdata[0];
                 const trackingdocid = dbData.doc_name !== '' ? dbData.doc_name : '';
-
-                let tempPath = path.join(__dirname, '../temp'); // change to s3 
-
+                let tempPath = path.join(__dirname, '../temp'); // change to s3 or anyother cloud 
                 let McondiotnQuery = {};
 
                 if (docName) {
@@ -327,9 +295,7 @@ router.post('/getdoc', authenticateToken, async (req, res, next) => {
                 } else {
                     McondiotnQuery = { _id: new ObjectId(trackingdocid) };
                 }
-
                 const result = await mongodbf.MfindWithCondition("scroll_tracking_doc", McondiotnQuery,( noOfDocs == null ? 1 :noOfDocs));
-                
                 const docs = [];
                 for (const [key, val] of Object.entries(result)) {
                     for (const doc of val.basicdoc) {
@@ -340,14 +306,12 @@ router.post('/getdoc', authenticateToken, async (req, res, next) => {
                         };
                         docs.push(docObject);
                     }
-                    break; // If you only want to process the first document
+                    break;
                 }
-
                 const outDataResult = {
                     "path": result.docpath,
                     "docs": docs
                 };
-
                 res.status(200).json(resultRes("success", '', outDataResult));
             } else {
                 res.status(203).json(resultRes("success", 'No data'));
@@ -356,11 +320,8 @@ router.post('/getdoc', authenticateToken, async (req, res, next) => {
             res.status(401).json(resultRes("error", "Invalid user data"));
         }
     } catch (error) {
-        console.error('Error in /getdoc route:', error);
         res.status(500).json(resultRes("error", 'Internal Server Error'));
     }
 })
-
-
 
 module.exports = router;
