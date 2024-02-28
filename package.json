@@ -2,12 +2,12 @@
   "name": "simple7812",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "nodemon ./app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "YUTHISH",
   "license": "ISC",
   "dependencies": {
     "@walletconnect/web3wallet": "^1.10.2",
