@@ -1,5 +1,7 @@
 
-# Simple Node.js Express API with Login, Signup, File Upload, and Preview
+# Simple Node.js Express API with Login, Signup, File Upload, and Preview 
+
+## Using JWT Token for Secure Authentication
 
 ## Currently in Development
 
