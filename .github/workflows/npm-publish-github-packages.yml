@@ -1,32 +1,36 @@
-name: simple7812
-
+name: simple7812v1.0
 on:
-  release:
-    types: [created]
-
+  push:
+    branches:
+      - master
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 18
-      - run: npm ci
-      
-
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm ci
-      - run: npm login
-      - run: npm publish
+      - name: Install Dependencies
+        run: npm install -g npm@latest
+        
+      - name: Check Git Status
+        run: |
+          git config --global user.email "blackscropionx25@gmail.com"
+          git config --global user.name "Mrxscropionx7812"
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "Committing changes before publishing"
+          fi
+      - name: Display Node.js and npm Versions
+        run: |
+          echo "Node.js version: $(node --version)"
+          echo "npm version: $(npm --version)"
+      - name: Delay
+        run: sleep 30s  # Add a delay of 30 seconds
+      - name: Publish to NPM
+        run: npm publish --access=public
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH }}
