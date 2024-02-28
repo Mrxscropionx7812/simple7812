@@ -21,6 +21,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Delay
+        run: sleep 30s  # Add a delay of 30 seconds
+
+      - name: Bump Version
+        run: npm version patch  # Bump the version number
+
       - name: Publish to NPM
         run: npm publish --access=public
         env:
