@@ -3,7 +3,7 @@ name: NPM Publish
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   publish:
@@ -14,10 +14,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Node.js
-        run: |
-          curl -o setup-node.sh -sSL https://github.com/actions/setup-node/raw/main/.github/scripts/setup-node.sh
-          bash setup-node.sh -v 14
-          rm setup-node.sh
+        uses: actions/setup-node@v4
+        with:
+          node-version: 14
 
       - name: Install Dependencies
         run: npm install
