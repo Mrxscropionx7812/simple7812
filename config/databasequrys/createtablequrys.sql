@@ -35,7 +35,8 @@ CREATE TABLE scroll_tracking (
 );
 
 
-ALTER TABLE scroll_tracking ADD COLUMN doc_name VARCHAR(255); 
+ALTER TABLE scroll_tracking ADD COLUMN tracking_docid VARCHAR(255); 
+
 
 
 SELECT * from ss_userdetails where phonenumber = '91-7788227711';
