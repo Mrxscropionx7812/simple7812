@@ -21,6 +21,13 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Check Git Status
+        run: |
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "Committing changes before publishing"
+          fi
+
       - name: Delay
         run: sleep 30s  # Add a delay of 30 seconds
 
