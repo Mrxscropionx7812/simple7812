@@ -1,3 +1,4 @@
+
 # Simple Node.js Express API with Login, Signup, File Upload, and Preview
 
 ## Currently in Development
@@ -10,6 +11,9 @@ This is a basic web application developed using Node.js and Express.js, providin
 
 [ ```User Authentication``` ]
 - Simple and secure user registration (signup) and authentication (login) system.
+- Utilizes JWT (JSON Web Tokens) for secure user authentication.
+  - JWTs are stateless, reducing the need for storing user sessions on the server.
+  - Provides a secure and efficient way to verify the authenticity of users.
 
 [ ```File Upload``` ]
 - Users can upload files through a user-friendly interface.
@@ -17,6 +21,19 @@ This is a basic web application developed using Node.js and Express.js, providin
 
 [ ```File Preview``` ]
 - Implemented file preview functionality to allow users to preview uploaded files before finalizing.
+
+[ ```Security Measures``` ]
+- [ ```JWT Token Authentication``` ]
+  - Utilizes JWT tokens to authenticate users securely.
+  - Provides a secure and scalable authentication mechanism.
+
+- [ ```Encryption``` ]
+  - Implements encryption techniques to secure sensitive data during transmission.
+  - Ensures the confidentiality of data exchanged between the client and the server.
+
+- [ ```Hashing``` ]
+  - Utilizes hashing algorithms to securely store and manage user passwords.
+  - Enhances password security by storing only the hash, not the actual password.
 
 ### Tech Stack:
 
