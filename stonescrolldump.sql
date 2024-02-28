@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.36, for Linux (x86_64)
 --
--- Host: codespaces-06a029    Database: stonescroll
+-- Host: localhost    Database: stonescroll
 -- ------------------------------------------------------
 -- Server version	8.0.36-0ubuntu0.20.04.1
 
@@ -41,7 +41,7 @@ CREATE TABLE `scroll_tracking` (
 
 LOCK TABLES `scroll_tracking` WRITE;
 /*!40000 ALTER TABLE `scroll_tracking` DISABLE KEYS */;
-INSERT INTO `scroll_tracking` VALUES (9,'testuser7',2,'A4',2,'2024-02-13 00:00:00',NULL,NULL,'ss_6616963398.png');
+INSERT INTO `scroll_tracking` VALUES (9,'testuser7',2,'A4',2,'2024-02-13 00:00:00',NULL,NULL,'65dcb9b7c59dc8b5e8bb6d0c');
 /*!40000 ALTER TABLE `scroll_tracking` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,4 +91,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-23 14:21:35
+-- Dump completed on 2024-02-28 20:12:56
