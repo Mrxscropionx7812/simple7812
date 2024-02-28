@@ -1,4 +1,4 @@
-# Simple Node.js Express App with Login, Signup, File Upload, and Preview
+# Simple Node.js Express API with Login, Signup, File Upload, and Preview
 
 ## Currently in Development
 
@@ -46,4 +46,9 @@ This is a basic web application developed using Node.js and Express.js, providin
    ```bash
    mysql -u your-username -p stonescroll < stonescrolldump.sql
    ```
+#### MongoDB Configuration:
+
+1.Ensure you have MongoDB installed on your machine.
+2.Create a new database named [ `stonescroll` ].
+
 
