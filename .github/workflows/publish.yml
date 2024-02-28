@@ -14,9 +14,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 14
+        run: |
+          curl -o setup-node.sh -sSL https://github.com/actions/setup-node/raw/main/.github/scripts/setup-node.sh
+          bash setup-node.sh -v 14
+          rm setup-node.sh
 
       - name: Install Dependencies
         run: npm install
