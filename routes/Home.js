@@ -117,6 +117,7 @@ router.post('/login', async(req, res, next) => {
         const table = "ss_userdetails";
         const selectSql = `SELECT * from ${table} where phonenumber = '${result['phonenumber']}';`;
         const dbdata = await mysqldb.find(selectSql)
+        
         if (!dbdata) return res.status(403).json(resultRes('error', "something went worng"));
 
         if (dbdata != null && dbdata.length > 0) {

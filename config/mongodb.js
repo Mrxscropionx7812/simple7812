@@ -1,9 +1,11 @@
+require('dotenv').config();
 const { MongoClient } = require('mongodb');
 
 const Mdb = 'stonescroll';
 
 // Connection URI
-const uri = 'mongodb://127.0.0.1:27017';
+
+const uri = (process.env.MONGO_HOST).toString();
 
 // Create a new MongoClient
 const client = new MongoClient(uri);
