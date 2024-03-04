@@ -1,53 +1,38 @@
-name: simple7812v1.0
-
+name: simple7812
 on:
   push:
     branches:
       - master
-
 jobs:
   publish:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
       - name: Install Dependencies
         run: npm install -g npm@latest
-
+        
       - name: Check Git Status
         run: |
           git config --global user.email "blackscropionx25@gmail.com"
           git config --global user.name "Mrxscropionx7812"
-          # Get the list of changed files
-          changed_files=$(git diff --name-only)
-
-          if [[ -n "$changed_files" ]]; then
-            git add $changed_files
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
             git commit -m "Committing changes before publishing"
           fi
-
       - name: Display Node.js and npm Versions
         run: |
           echo "Node.js version: $(node --version)"
           echo "npm version: $(npm --version)"
-
       - name: Delay
-        run: sleep 10s  # Add a delay of 30 seconds
-
+        run: sleep 30s  # Add a delay of 30 seconds
       - name: Login to npm
         run: npm login
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH }}
-
-      - name: Publish to NPM using rsync
-        run: |
-          rsync -av --exclude=".git" --exclude=".github" $changed_files <destination_folder>
+      - name: Publish to NPM
+        run: npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH }}
