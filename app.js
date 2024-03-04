@@ -8,6 +8,7 @@ app.use(cors());
 const port = 30012;
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
+    console.log("Hello");
 });
 
 
