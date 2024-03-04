@@ -9,6 +9,16 @@
 
 This is a basic web application developed using Node.js and Express.js, providing essential features such as user authentication (login and signup), file upload functionality, and file preview. The project aims to serve as a foundation for developers looking to build lightweight web applications with fundamental user management and file handling capabilities.
 
+Git Source URL :  
+```bash
+   https://github.com/Mrxscropionx7812/simple7812
+```
+npm Source URL :  
+```bash
+  https://www.npmjs.com/package/simple7812
+```
+
+
 ### Key Features:
 
 [ ```User Authentication``` ]
